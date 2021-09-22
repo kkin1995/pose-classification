@@ -3,3 +3,12 @@
 
 # Video
 *.mp4
+
+# Images
+*.jpeg
+*.jpg
+*.png
+
+# Data File
+*.yaml
+*.json
