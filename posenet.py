@@ -1,4 +1,5 @@
 import tensorflow as tf
+import cv2
 
 def return_keypoints_from_image(image):
     """
@@ -63,8 +64,6 @@ def plot_keypoint_on_image(image):
 
 
 if __name__ == '__main__':
-    import tensorflow_hub as tfhub
-    import cv2
     import matplotlib.pyplot as plt
     from matplotlib import animation
 
@@ -72,8 +71,8 @@ if __name__ == '__main__':
     PLOT_KEYPOINT_ON_IMAGE = True
     SAVE_KEYPOINTS = False
 
-    posenet = tfhub.load("https://tfhub.dev/google/movenet/singlepose/lightning/4")
-
+    # Posenet Model Download URL: https://tfhub.dev/google/movenet/singlepose/lightning/4
+    posenet = tf.saved_model.load("models/movenet_singlepose_lightning_4")
     posenet_model = posenet.signatures["serving_default"]
 
     if PLOT_KEYPOINT_ON_VIDEO:
@@ -102,14 +101,14 @@ if __name__ == '__main__':
         video.release()
 
     elif PLOT_KEYPOINT_ON_IMAGE:
-        image_path = "sample_image_2.jpeg"
+        image_path = "sample_image.jpeg"
         image = cv2.imread(image_path)
         image = plot_keypoint_on_image(image)
         plt.imshow(image)
         plt.savefig(image_path.split(".")[0] + "_with_confidence_gt_0.3.jpeg")
 
     elif SAVE_KEYPOINTS:
-        image_path = "sample_image_2.jpeg"
+        image_path = "sample_image.jpeg"
         image = cv2.imread(image_path)
         keypoint_dict = return_keypoints_from_image(image)
 

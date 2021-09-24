@@ -12,3 +12,6 @@
 # Data File
 *.yaml
 *.json
+
+# Tensorflow Models
+models/
