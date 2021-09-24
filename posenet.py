@@ -1,5 +1,6 @@
 import tensorflow as tf
 import cv2
+import numpy as np
 
 def return_keypoints_from_image(image):
     """
@@ -30,6 +31,28 @@ def return_keypoints_from_image(image):
     
     return keypoint_dict
 
+def angle_between_three_points(keypoints, point_1_str, point_2_str, point_3_str):
+    """
+    Calculates the angle formed at point_1 by point_2 and point_3
+    
+    Parameters:
+    keypoints: A dictionary of keypoints names and yx coordinates alongwith confidence score.
+    Keypoints dictionary should be as per output of return_keypoints_from_image()
+    point_1_str, point_2_str, point_3_str: String names of keypoints of interest. Should match the keys
+    in the keypoints dictionary
+
+    Returns:
+    angle: angle at point_1 in degrees
+    """
+    point_1 = keypoints[point_1_str]
+    point_2 = keypoints[point_2_str]
+    point_3 = keypoints[point_3_str]
+    angle = np.arctan2(point_3[0] - point_1[0], point_3[1] - point_1[1]) - \
+        np.arctan2(point_2[0] - point_1[0], point_2[1] - point_1[1])
+
+    return angle * (180 / np.pi)
+
+
 def plot_keypoint_on_image(image):
     """
     Passes and image through the Pose Net model and plots the keypoints on a rescaled image
@@ -40,27 +63,21 @@ def plot_keypoint_on_image(image):
     Returns:
     image_numpy - Rescaled numpy array with the keypoints plotted
     """
-    orig_image_shape = image.shape
-    
+    image_shape = image.shape
+
     image_to_process = image.copy()
+    keypoints_dict = return_keypoints_from_image(image_to_process)
     
     image = tf.expand_dims(image, axis = 0)
-    image = tf.cast(tf.image.resize_with_pad(image, orig_image_shape[1], orig_image_shape[1]), dtype = tf.int32)
-    
-    image_to_process = tf.expand_dims(image_to_process, axis=0)
-    image_to_process = tf.cast(tf.image.resize_with_pad(image_to_process, 192, 192), dtype=tf.int32)
+    image = tf.cast(tf.image.resize_with_pad(image, image_shape[1], image_shape[1]), dtype = tf.int32)
+    image = image.numpy()
+    image = image.reshape((image_shape[1], image_shape[1], 3))
 
-    outputs = posenet_model(image_to_process)
-    keypoints = outputs["output_0"].numpy()
-    keypoints = keypoints.reshape((17, 3))
-    points = keypoints[:, 0:2] * orig_image_shape[1]
-
-    image_numpy = image.numpy()
-    image_numpy = image_numpy.reshape((orig_image_shape[1], orig_image_shape[1], 3))
-    for i in range(17):
-        if keypoints[i, 2] >= 0.3:
-            image_numpy = cv2.circle(image_numpy, (int(points[i, 1]), int(points[i, 0])), radius=5, color=(255, 0, 0), thickness=-1)
-    return image_numpy
+    for value in keypoints_dict.values():
+        if value[2] >= 0.3:
+            image = cv2.circle(image, (int(value[1] * image_shape[1]), int(value[0] * image_shape[1])), radius = 5, color = (255, 0, 0), thickness = -1)
+  
+    return image
 
 
 if __name__ == '__main__':
@@ -111,6 +128,9 @@ if __name__ == '__main__':
         image_path = "sample_image.jpeg"
         image = cv2.imread(image_path)
         keypoint_dict = return_keypoints_from_image(image)
+
+        angle = angle_between_three_points(keypoint_dict, "right_elbow", "right_shoulder", "right_wrist")
+        print(angle)
 
         with open(image_path.split(".")[0] + "_keypoints.yaml", "w") as f:
             f.write("File Name: " + image_path + "\n")
