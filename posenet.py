@@ -14,6 +14,10 @@ def return_keypoints_from_image(image):
     y - coordinate, x - coordinate and the confidence score.
     """
 
+    # Posenet Model Download URL: https://tfhub.dev/google/movenet/singlepose/lightning/4
+    posenet = tf.saved_model.load("models/movenet_singlepose_lightning_4")
+    posenet_model = posenet.signatures["serving_default"]
+
     keypoint_dict = {}
 
     keypoint_names =  ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", \
@@ -23,6 +27,36 @@ def return_keypoints_from_image(image):
     image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
 
     outputs = posenet_model(image)
+    keypoints = outputs["output_0"].numpy()
+    keypoints = keypoints.reshape((17, 3))
+
+    for i in range(17):
+        keypoint_dict[keypoint_names[i]] = keypoints[i, :]
+    
+    return keypoint_dict
+
+def return_keypoints_from_image_with_model(image, model):
+    """
+    Passes an image through the Pose Net model and returns the 17 keypoints in a dictionary
+
+    Parameters:
+    image - Numpy Array representing the image
+    model - Tensorflow Model Signature
+
+    Return:
+    keypoints_dict - A dictionary with the keys being the names of the body parts and the values being a list containing the
+    y - coordinate, x - coordinate and the confidence score.
+    """
+
+    keypoint_dict = {}
+
+    keypoint_names =  ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", \
+        "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle"]
+
+    image = tf.expand_dims(image, axis=0)
+    image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
+
+    outputs = model(image)
     keypoints = outputs["output_0"].numpy()
     keypoints = keypoints.reshape((17, 3))
 
@@ -87,10 +121,6 @@ if __name__ == '__main__':
     PLOT_KEYPOINT_ON_VIDEO = False
     PLOT_KEYPOINT_ON_IMAGE = True
     SAVE_KEYPOINTS = False
-
-    # Posenet Model Download URL: https://tfhub.dev/google/movenet/singlepose/lightning/4
-    posenet = tf.saved_model.load("models/movenet_singlepose_lightning_4")
-    posenet_model = posenet.signatures["serving_default"]
 
     if PLOT_KEYPOINT_ON_VIDEO:
         total_time_counter = 100
