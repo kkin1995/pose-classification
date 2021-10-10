@@ -16,7 +16,7 @@ def logger(message):
     Parameters:
     message: String Representation of message to be logged
     """
-    logfile = time.asctime().split()[2] + "-" + time.asctime().split()[1] + "-" + time.asctime().split()[-1] + ".log"
+    logfile = "../logs/" + time.asctime().split()[2] + "-" + time.asctime().split()[1] + "-" + time.asctime().split()[-1] + ".log"
     with open(logfile, "a") as f:
         f.write("[" + time.asctime().split()[3] + "] " + message + "\n")
 

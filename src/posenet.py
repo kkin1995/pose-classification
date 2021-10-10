@@ -118,6 +118,8 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from matplotlib import animation
 
+    images_dir = "../tests/test_images/"
+
     PLOT_KEYPOINT_ON_VIDEO = False
     PLOT_KEYPOINT_ON_IMAGE = True
     SAVE_KEYPOINTS = False
@@ -144,25 +146,25 @@ if __name__ == '__main__':
             anim = animation.FuncAnimation(fig, animate, init_func = init, frames = 128)
             counter += 1
 
-        anim.save("animation.mp4")
+        anim.save(images_dir + "animation.mp4")
         video.release()
 
     elif PLOT_KEYPOINT_ON_IMAGE:
-        image_path = "sample_image.jpeg"
+        image_path = images_dir + "sample_image.jpeg"
         image = cv2.imread(image_path)
         image = plot_keypoint_on_image(image)
         plt.imshow(image)
-        plt.savefig(image_path.split(".")[0] + "_with_confidence_gt_0.3.jpeg")
+        plt.savefig(images_dir + "sample_image_with_confidence_gt_0.3.jpeg")
 
     elif SAVE_KEYPOINTS:
-        image_path = "sample_image.jpeg"
+        image_path = images_dir + "sample_image.jpeg"
         image = cv2.imread(image_path)
         keypoint_dict = return_keypoints_from_image(image)
 
         angle = angle_between_three_points(keypoint_dict, "right_elbow", "right_shoulder", "right_wrist")
         print(angle)
 
-        with open(image_path.split(".")[0] + "_keypoints.yaml", "w") as f:
-            f.write("File Name: " + image_path + "\n")
+        with open(images_dir + "sample_image_keypoints.yaml", "w") as f:
+            f.write("File Name: sample_image" + "\n")
             for key, value in keypoint_dict.items():
                 f.write(key + ": " + str(list(value)) + "\n")
