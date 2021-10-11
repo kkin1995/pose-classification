@@ -5,15 +5,11 @@ description = "Detection of keypoints using Tensorflow's pre-trained posenet and
 authors = ["kkin1995 <karan@akinariwala.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-tensorflow = "^2.6.0"
-opencv-python = "^4.5.3"
-numpy = "^1.21.2"
-matplotlib = "^3.4.3"
-scikit-image = "^0.18.3"
-tqdm = "^4.62.3"
+python = "3.9"
 
 [tool.poetry.dev-dependencies]
+opencv-python = "^4.5.3"
+matplotlib = "^3.4.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
