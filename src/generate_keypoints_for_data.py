@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from posenet import return_keypoints_from_image_with_model
 import tensorflow as tf
-from tqdm import tqdm
 import time
 
 def logger(message):
@@ -42,9 +41,7 @@ def generate_keypoints(source_data_folder, target_data_folder, classes, model):
     model: Tensorflow Signature of Posenet Model
     
     """
-    pbar = tqdm(classes)
-    for c in pbar:
-        pbar.set_description("Generating Keypoints for " + c)
+    for c in classes:
         logger("Generating Keypoints for " + c)
         source_files = glob.glob(source_data_folder + c + "/*.jpg")
         target_class_folder = target_data_folder + c + "/"

@@ -10,11 +10,12 @@ provided as a Numpy Array
 
 The file "generate_keypoints_for_data.py" contains a function to compute keypoints for many images for many classes.
 
-## Note
-The "pyproject.toml" and "poetry.lock" files are invalid. Following are the list of dependencies:
-1. Tensorflow
-2. OpenCV
-3. Numpy
-4. Matplotlib
-5. Scikit-Image
-6. tqdm
+## Install Dependencies
+```
+pip3 install -r requirements.txt
+```
+
+## Install Dependencies for Development (Includes Jupyter Notebook)
+```
+pip3 install -r requirements-dev.txt
+```
