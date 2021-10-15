@@ -8,6 +8,7 @@
 *.mp4
 
 # Images
+plots/
 *.jpeg
 *.jpg
 *.png
