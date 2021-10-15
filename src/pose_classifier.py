@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.layers import Input, Dense
 
-def pose_classifier(data, labels):
+def pose_classifier(data, labels, learning_rate = 0.01, epochs = 10):
     """
     Takes the data and labels as input, creates a keras model using the Functional API
     and returns the trained model, training / validation metrics and testing metrics.
@@ -15,6 +15,8 @@ def pose_classifier(data, labels):
     Parameters:
     data: A Numpy Array of shape (batch_size, input_dim)
     labels: A Numpy Array of shape (batch_size, no_of_classes)
+    learning_rate: A floating point value defining the step size of the learning algorithm
+    epochs: An integer defining the number of iterations
     """
     X_train, X_val, y_train, y_val = train_test_split(data, labels, test_size=0.3, random_state=42)
 
@@ -27,10 +29,10 @@ def pose_classifier(data, labels):
     x = Dense(20, activation = 'relu')(inputs)
     outputs = Dense(5, activation = 'softmax')(x)
     model = keras.Model(inputs = inputs, outputs = outputs, name = "pose_classifier")
-    opt = keras.optimizers.Adam(learning_rate = LEARNING_RATE)
+    opt = keras.optimizers.Adam(learning_rate = learning_rate)
     model.compile(optimizer=opt, loss="categorical_crossentropy", metrics = "accuracy")
 
-    history = model.fit(x = X_train, y = y_train, validation_data = (X_val, y_val), epochs = EPOCHS)
+    history = model.fit(x = X_train, y = y_train, validation_data = (X_val, y_val), epochs = epochs)
 
     test_metrics = model.evaluate(test_data, test_labels)
 
@@ -92,7 +94,7 @@ if __name__ == '__main__':
     print("Shape of Test Data = {}".format(test_data.shape))
     print("Shape of Test Labels = {}".format(test_labels.shape))
 
-    model, history, test_metrics = pose_classifier(data, labels)
+    model, history, test_metrics = pose_classifier(data, labels, learning_rate = LEARNING_RATE, epochs = EPOCHS)
     tf.keras.utils.plot_model(model, to_file="models/model.png", show_shapes=True, show_layer_names=True)
     model.save("models/pose_classifier")
 
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     fig, axs = plt.subplots(2, 2)
     plt.suptitle("Training Metrics")
     plt.tight_layout()
-    
+
     axs[0, 0].plot(history.history["accuracy"])
     axs[0, 0].set_title("Training Accuracy")
     axs[0, 0].set_xlabel("Epochs")
