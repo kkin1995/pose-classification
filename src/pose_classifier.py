@@ -38,6 +38,12 @@ def pose_classifier(data, labels, learning_rate = 0.01, epochs = 10):
 
     return model, history, test_metrics
 
+def get_prediction(keypoints_array, model):
+    predictions = model.predict(keypoints_array)
+    classes = ["downdog", "goddess", "plank", "tree", "warrior2"]
+    prediction_index = np.argmax(predictions)
+    return classes[prediction_index]
+
 if __name__ == '__main__':
     LEARNING_RATE = 0.01
     EPOCHS = 10

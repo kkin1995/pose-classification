@@ -15,7 +15,7 @@ def return_keypoints_from_image(image):
     """
 
     # Posenet Model Download URL: https://tfhub.dev/google/movenet/singlepose/lightning/4
-    posenet = tf.saved_model.load("models/movenet_singlepose_lightning_4")
+    posenet = tf.saved_model.load("/Users/karankinariwala/Dropbox/KARAN/5-Projects/pose-detection/src/models/movenet_singlepose_lightning_4")
     posenet_model = posenet.signatures["serving_default"]
 
     keypoint_dict = {}
