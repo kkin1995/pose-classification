@@ -4,20 +4,10 @@ import cv2
 from skimage import io
 import numpy as np
 import matplotlib.pyplot as plt
-from posenet import return_keypoints_from_image_with_model
+from posenet import return_keypoints_from_image
 import tensorflow as tf
 import time
-
-def logger(message):
-    """
-    Logs a message with timestamp to log file
-
-    Parameters:
-    message: String Representation of message to be logged
-    """
-    logfile = "../logs/" + time.asctime().split()[2] + "-" + time.asctime().split()[1] + "-" + time.asctime().split()[-1] + ".log"
-    with open(logfile, "a") as f:
-        f.write("[" + time.asctime().split()[3] + "] " + message + "\n")
+from utils import logger
 
 def generate_keypoints(source_data_folder, target_data_folder, classes, model):
     """
@@ -55,7 +45,7 @@ def generate_keypoints(source_data_folder, target_data_folder, classes, model):
             except Exception as e:
                 logger(str(e))
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            keypoints_dict = return_keypoints_from_image_with_model(image, model)
+            keypoints_dict = return_keypoints_from_image(image, model)
             keypoints = np.array(list(keypoints_dict.values()))[:, 0:2].reshape((34,1))
             np.save(target_class_folder + image_number + ".npy", keypoints)
 
